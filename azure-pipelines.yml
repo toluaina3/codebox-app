@@ -37,6 +37,7 @@ stages:
         inputs:
           script: |
             sudo apt-get update
+            sudo apt install -y postgresql-client
             echo "downloading asdf from git"
             git clone https://github.com/asdf-vm/asdf.git ~/.asdf --branch v0.10.0
             echo "installing the asdf"

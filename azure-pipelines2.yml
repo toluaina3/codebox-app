@@ -162,7 +162,7 @@ stages:
             . $HOME/.asdf/completions/asdf.bash
             echo "**Running migration to dev db**"
             chmod +x deployments/scripts/db_migrations.sh
-            ./db_migrations.sh
+            ./deployments/scripts/db_migrations.sh
 
     - job: Run_deploy_codebox_image_dev_to_registry
       displayName: Run_deploy_codebox_image_dev_to_registry

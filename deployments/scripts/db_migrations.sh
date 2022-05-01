@@ -1,5 +1,5 @@
 # shellcheck disable=SC2046
-db_connection=$(pg_isready -d $(DB_NAME)  -h $(DB_HOST) -p $(DB_PASSWORD) -U $(DB_USERNAME))
+db_connection=$(pg_isready -d $(DB_NAME)  -h $(DB_HOST) -p 5432 -U $(DB_USERNAME))
 db_status=$?
 
 echo $db_status
