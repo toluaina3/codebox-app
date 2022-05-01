@@ -1,0 +1,31 @@
+<.form let={f} for={@conn} action={Routes.user_session_path(@conn, :create)} as={:user}>
+  <%= if @error_message do %>
+    <div class="alert alert-danger">
+      <p><%= @error_message %></p>
+    </div>
+  <% end %>
+
+  <div class="flex flex-col">
+    <%= label f, :email, class: "text-sm" %>
+    <%= email_input f, :email, required: true, class: "rounded" %>
+  </div>
+
+  <div class="flex flex-col my-2">
+    <%= label f, :password, class: "text-sm" %>
+    <%= password_input f, :password, required: true, class: "rounded" %>
+  </div>
+
+  <div class="flex mt-3 items-center gap-2">
+    <%= checkbox f, :remember_me, class: "rounded" %>
+    <%= label f, :remember_me, "Keep me logged in for 60 days", class: "text-xs" %>
+  </div>
+
+  <div class="flex place-content-end my-4">
+    <%= submit "Log in", class: "px-4 py-2 border border-transparent rounded-md shadow-sm text-base font-medium text-white bg-slate-600 hover:bg-slate-700" %>
+  </div>
+</.form>
+
+<p class="text-center text-xs">
+  <%= link "Register", to: Routes.user_registration_path(@conn, :new) %> |
+  <%= link "Forgot your password?", to: Routes.user_reset_password_path(@conn, :new) %>
+</p>
