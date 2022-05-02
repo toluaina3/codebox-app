@@ -5,7 +5,7 @@ RUN apk add --no-cache build-base git curl inotify-tools
 WORKDIR /app
 
 ARG MIX_ENV
-ARG MIX_ENV=prod
+ARG MIX_ENV=dev
 ENV MIX_ENV=$MIX_ENV
 # install hex package manager
 RUN mix local.hex --force && mix local.rebar --force

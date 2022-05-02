@@ -1,8 +1,9 @@
 #!/bin/bash
 
 # Assign the filename
-filename="../../Dockerfile"
-build_branch=$(git branch --show-current)
+filename="Dockerfile"
+# shellcheck disable=SC2154
+build_branch=${branch}
 echo $build_branch
 # shellcheck disable=SC2154
 if [[ $build_branch == "dev" ]] ;
