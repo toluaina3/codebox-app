@@ -209,6 +209,8 @@ stages:
               docker build -t codebox-dev .
               docker tag codebox-dev:latest public.ecr.aws/p9t2s4l2/codebox-dev:$(tag)
               docker push public.ecr.aws/p9t2s4l2/codebox-dev:$(tag)
+              aws eks update-kubeconfig --region $(AWS_DEFAULT_REGION) --name $(CLUSTER_NAME)
+              helm install codebox-1 codebox
 
 #######################################################################################################################
 
@@ -261,6 +263,8 @@ stages:
               docker build -t codebox-stg .
               docker tag codebox-stg:latest public.ecr.aws/p9t2s4l2/codebox-stg:$(tag)
               docker push public.ecr.aws/p9t2s4l2/codebox-prod:$(tag)
+              aws eks update-kubeconfig --region $(AWS_DEFAULT_REGION) --name $(CLUSTER_NAME)
+              helm install codebox-1 codebox
 
 #######################################################################################################################
 
@@ -319,6 +323,8 @@ stages:
               docker build -t codebox-prod .
               docker tag codebox-prod:latest public.ecr.aws/p9t2s4l2/codebox-prod:$(tag)
               docker push public.ecr.aws/p9t2s4l2/codebox-prod:$(tag)
+              aws eks update-kubeconfig --region $(AWS_DEFAULT_REGION) --name $(CLUSTER_NAME)
+              helm install codebox-1 codebox
  
 
 
