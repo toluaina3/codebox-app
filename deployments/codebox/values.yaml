@@ -2,7 +2,7 @@
 replicaCount: 1
 
 image:
-# pulls the codbox image from AWS registry
+# pulls the codebox image from AWS registry
   repository: public.ecr.aws/p9t2s4l2/codebox
   pullPolicy: IfNotPresent
   
@@ -69,7 +69,7 @@ resources: {}
 autoscaling:
   enabled: True
   minReplicas: 1
-  maxReplicas: 2
+  maxReplicas: 4
   targetCPUUtilizationPercentage: 80
   # targetMemoryUtilizationPercentage: 80
 

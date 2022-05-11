@@ -1,0 +1,99 @@
+trigger:
+  branches:
+    include:
+      - dev
+      - staging
+      - prod
+
+pr:
+  - dev
+  - staging
+  - prod
+
+resources:
+- repo: self
+
+variables:
+  tag: '$(Build.BuildId)'
+  isDev: $[eq(variables['Build.SourceBranchName'], 'dev')]
+  isStg: $[eq(variables['Build.SourceBranchName'], 'staging')]
+  isProd: $[eq(variables['Build.SourceBranchName'], 'prod')]
+  vmImageName: 'ubuntu-18.04'
+
+stages:
+- stage: Build_elixir_codebox_app_Dev
+  displayName: Build app and test
+  condition: eq(variables.isDev, true)
+
+  jobs:
+    - job: Run_DB_migration
+      displayName: Run_DB_migration
+      dependsOn: Run_Test_For_Dev
+      pool:
+        vmImage: $(vmImageName)
+      steps:
+      - task: CmdLine@2
+        displayName: 'Install asdf into the vm'
+        inputs:
+          script: |
+            sudo apt-get update
+            sudo apt install -y postgresql-client
+            echo "downloading asdf from git"
+            git clone https://github.com/asdf-vm/asdf.git ~/.asdf --branch v0.10.0
+            echo "installing the asdf"
+            . $HOME/.asdf/asdf.sh
+            . $HOME/.asdf/completions/asdf.bash
+            echo "Install asdf plugin dependecies"
+            sudo apt-get install dirmngr gpg curl gawk
+            echo "Install asdf plugins"
+            asdf plugin add erlang
+            asdf plugin add elixir
+
+      - task: DownloadSecureFile@1
+        name: DevExs
+        displayName: 'dev.exs file'
+        inputs:
+          secureFile: 'dev.exs'
+
+      - task: DownloadSecureFile@1
+        name: ProdExs
+        displayName: 'prod.exs file'
+        inputs:
+          secureFile: 'prod.exs'
+
+      - task: CmdLine@2
+        displayName: 'Copy the dev, prod, test.exs to Project directory'
+        inputs:
+          script: |
+              cp $(DevExs.secureFilePath) '$(System.DefaultWorkingDirectory)/config'
+              cp $(ProdExs.secureFilePath) '$(System.DefaultWorkingDirectory)/config'
+
+      - task: CmdLine@2
+        displayName: 'Install elixir and erlang using asdf'
+        inputs:
+          script: |
+            . $HOME/.asdf/asdf.sh
+            . $HOME/.asdf/completions/asdf.bash
+            asdf install
+
+      - task: CmdLine@2
+        displayName: 'Fetch and Install project dependencies for dev'
+        inputs:
+          script: |
+            . $HOME/.asdf/asdf.sh
+            . $HOME/.asdf/completions/asdf.bash
+            mix local.hex --force && mix local.rebar --force
+            echo "Package manager **done**"
+            mix deps.get --only dev
+            echo "app dependencies installed **done**"
+
+      - task: CmdLine@2
+        displayName: 'Run codebox migration'
+        inputs:
+          script: |
+            . $HOME/.asdf/asdf.sh
+            . $HOME/.asdf/completions/asdf.bash
+            echo "**Running migration to dev db**"
+            chmod +x deployments/scripts/db_migrations.sh
+            ./db_migrations.sh
+
